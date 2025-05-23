@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Chancon Estudio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a2a2a;
+            color: #e0e0e0;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 20px;
+            padding: 15px;
+        }
+        h2 {
+            text-align: center;
+            color: #00cc99;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        #clock {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00cc99;
+            margin-bottom: 15px;
+        }
+        #voiceControl {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        #voiceControl button {
+            background-color: #00ff99;
+            color: #1a2a2a;
+            border: 2px solid #00cc99;
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #voiceControl button:disabled {
+            background-color: #ff4444;
+            cursor: not-allowed;
+        }
+        #voiceControl button:hover:not(:disabled) {
+            background-color: #00e6b8;
+        }
+        .schedule-table {
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+        .schedule-table table {
+            background-color: #2a3a3a;
+            border: 2px solid #00cc99;
+            border-radius: 5px;
+        }
+        .schedule-table th, .schedule-table td {
+            border: 1px solid #00cc99;
+            padding: 8px;
+            text-align: center;
+            font-size: 1em;
+        }
+        .schedule-table th {
+            background-color: #003d33;
+        }
+        .schedule-table td.class-time {
+            background-color: #00cc99;
+            color: #1a2a2a;
+            font-weight: bold;
+        }
+        .schedule-table td.passed {
+            color: #888;
+            text-decoration: line-through;
+        }
+        .schedule-table td.class-time span {
+            color: #ff4444;
+        }
+        .routine-section {
+            margin-top: 15px;
+        }
+        .routine-day {
+            background-color: #2a3a3a;
+            border: 2px solid #00cc99;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .routine-day.locked {
+            opacity: 0.5;
+            pointer-events: none;
+            border-color: #666;
+        }
+        .routine-day h5 {
+            color: #00cc99;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .routine-day .routine-container {
+            display: flex;
+            align-items: flex-start;
+        }
+        .routine-schedule {
+            flex: 1;
+        }
+        .routine-schedule ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .routine-schedule li {
+            margin-bottom: 8px;
+            font-size: 1em;
+            position: relative;
+        }
+        .routine-schedule li.passed {
+            color: #888;
+            text-decoration: line-through;
+        }
+        .routine-schedule li.current {
+            color: #00ffcc;
+            font-weight: bold;
+        }
+        .routine-schedule li.current::before {
+            content: '➡️ ';
+            color: #ffcc00;
+            margin-right: 5px;
+        }
+        .next-routine {
+            margin-top: 10px;
+            color: #ffcc00;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+        .routine-clock {
+            margin-left: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #00cc99;
+        }
+        .countdown {
+            color: #ff4444;
+            margin-left: 10px;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+        .weekend-plan {
+            margin-top: 10px;
+            background-color: #2a4a4a;
+            border: 1px solid #00cc99;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body class="container">
+    <h2>App Chancon Estudio 🎓</h2>
+    <div id="clock">Cargando reloj...</div>
+    <div id="voiceControl">
+        <button id="voiceToggleBtn">Voz Activada</button>
+    </div>
+    <div class="schedule-table">
+        <h4>Horario Semanal</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Lunes</th>
+                    <th>Martes</th>
+                    <th>Miércoles</th>
+                    <th>Jueves</th>
+                    <th>Viernes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="passed"><span>12:00 PM - 1:30 PM</span></td><td class="passed class-time">Base de Datos</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>1:30 PM - 2:00 PM</span></td><td class="passed class-time">LBCOM1</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>2:00 PM - 3:30 PM</span></td><td class="passed class-time">Base de Datos</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>3:30 PM - 3:45 PM</span></td><td class="passed class-time">LBCOM1</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>3:45 PM - 5:15 PM</span></td><td class="passed class-time">Programación</td><td></td><td class="passed class-time">Física 2</td><td class="passed class-time">Física 2</td><td></td></tr>
+                <tr><td class="passed"><span>5:15 PM - 5:30 PM</span></td><td class="passed class-time">LBCOM2</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>5:30 PM - 7:00 PM</span></td><td></td><td class="passed class-time">Programación</td><td></td><td class="passed class-time">Estadística</td><td></td></tr>
+                <tr><td class="passed"><span>7:00 PM - 7:10 PM</span></td><td></td><td class="passed class-time">LBCOM2</td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>7:10 PM - 8:40 PM</span></td><td class="passed class-time">Diseño de Proyectos</td><td class="passed class-time">Programación</td><td></td><td class="passed class-time">Estadística</td><td></td></tr>
+                <tr><td class="passed"><span>8:40 PM - 8:50 PM</span></td><td></td><td class="passed class-time">LBCOM2</td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>8:50 PM - 10:20 PM</span></td><td class="passed class-time">Diseño de Proyectos</td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+        <p id="nextDay">Mañana (Viernes): Sin clases</p>
+    </div>
+    <div class="routine-section">
+        <h4>Mis Rutinas</h4>
+        <div class="routine-day" id="lunes">
+            <h5>Lunes</h5>
+            <div class="routine-container">
+                <div class="routine-schedule">
+                    <ul>
+                        <li id="lunes-0730-0800">7:30 AM - 8:00 AM: Desayuno y aseo<span class="countdown"></span></li>
+                        <li id="lunes-0800-0930">8:00 AM - 9:30 AM: Física: problemas<span class="countdown"></span></li>
+                        <li id="lunes-0930-1130">9:30 AM - 11:30 AM: Probabilidades: ejercicios<span class="countdown"></span></li>
+                        <li id="lunes-1130-1200">11:30 AM - 12:00 PM: Descanso<span class="countdown"></span></li>
+                        <li id="lunes-1200-1530">12:00 PM - 3:30 PM: Clase: Base de Datos<span class="countdown"></span></li>
+                        <li id="lunes-1530-1545">3:30 PM - 3:45 PM: Descanso<span class="countdown"></span></li>
+                        <li id="lunes-1545-1715">3:45 PM - 5:15 PM: Clase: Programación<span class="countdown"></span></li>
+                        <li id="lunes-1715-1800">5:15 PM - 6:00 PM: Merienda<span class="countdown"></span></li>
+                        <li id="lunes-1800-1900">6:00 PM - 7:00 PM: Repaso: Base de Datos<span class="countdown"></span></li>
+                        <li id="lunes-1900-1910">7:00 PM - 7:10 PM: Descanso<span class="countdown"></span></li>
+                        <li id="lunes-1910-2220">7:10 PM - 10:20 PM: Clase: Diseño de Proyectos<span class="countdown"></span></li>
+                        <li id="lunes-2220-2230">10:20 PM - 10:30 PM: Descanso<span class="countdown"></span></li>
+                        <li id="lunes-2230-2330">10:30 PM - 11:30 PM: Cena y relax<span class="countdown"></span></li>
+                        <li id="lunes-2330-0730">11:30 PM - 7:30 AM: Dormir<span class="countdown"></span></li>
+                    </ul>
+                    <div class="next-routine" id="lunes-next"></div>
+                </div>
+                <div class="routine-clock" id="lunes-clock"></div>
+            </div>
+        </div>
+        <div class="routine-day" id="martes">
+            <h5>Martes</h5>
+            <div class="routine-container">
+                <div class="routine-schedule">
+                    <ul>
+                        <li id="martes-0730-0800">7:30 AM - 8:00 AM: Desayuno y aseo<span class="countdown"></span></li>
+                        <li id="martes-0800-1000">8:00 AM - 10:00 AM: Probabilidades: práctica<span class="countdown"></span></li>
+                        <li id="martes-1000-1130">10:00 AM - 11:30 AM: Base de Datos: teoría<span class="countdown"></span></li>
+                        <li id="martes-1130-1730">11:30 AM - 5:30 PM: Almuerzo y descanso<span class="countdown"></span></li>
+                        <li id="martes-1730-2040">5:30 PM - 8:40 PM: Clase: Programación<span class="countdown"></span></li>
+                        <li id="martes-2040-2100">8:40 PM - 9:00 PM: Descanso<span class="countdown"></span></li>
+                        <li id="martes-2100-2200">9:00 PM - 10:00 PM: Repaso: Programación<span class="countdown"></span></li>
+                        <li id="martes-2200-2330">10:00 PM - 11:30 PM: Cena y relax<span class="countdown"></span></li>
+                        <li id="martes-2330-0730">11:30 PM - 7:30 AM: Dormir<span class="countdown"></span></li>
+                    </ul>
+                    <div class="next-routine" id="martes-next"></div>
+                </div>
+                <div class="routine-clock" id="martes-clock"></div>
+            </div>
+        </div>
+        <div class="routine-day" id="miercoles">
+            <h5>Miércoles</h5>
+            <div class="routine-container">
+                <div class="routine-schedule">
+                    <ul>
+                        <li id="miercoles-0730-0800">7:30 AM - 8:00 AM: Desayuno y aseo<span class="countdown"></span></li>
+                        <li id="miercoles-0800-1000">8:00 AM - 10:00 AM: Física: problemas<span class="countdown"></span></li>
+                        <li id="miercoles-1000-1130">10:00 AM - 11:30 AM: Diseño de Proyectos: notas<span class="countdown"></span></li>
+                        <li id="miercoles-1130-1545">11:30 AM - 3:45 PM: Almuerzo y descanso<span class="countdown"></span></li>
+                        <li id="miercoles-1545-1715">3:45 PM - 5:15 PM: Clase: Física<span class="countdown"></span></li>
+                        <li id="miercoles-1715-1730">5:15 PM - 5:30 PM: Descanso<span class="countdown"></span></li>
+                        <li id="miercoles-1730-1830">5:30 PM - 6:30 PM: Repaso: Física<span class="countdown"></span></li>
+                        <li id="miercoles-1830-1930">6:30 PM - 7:30 PM: Física: ejercicios<span class="countdown"></span></li>
+                        <li id="miercoles-1930-2330">7:30 PM - 11:30 PM: Libre o repaso<span class="countdown"></span></li>
+                        <li id="miercoles-2330-0730">11:30 PM - 7:30 AM: Dormir<span class="countdown"></span></li>
+                    </ul>
+                    <div class="next-routine" id="miercoles-next"></div>
+                </div>
+                <div class="routine-clock" id="miercoles-clock"></div>
+            </div>
+        </div>
+        <div class="routine-day" id="jueves">
+            <h5>Jueves</h5>
+            <div class="routine-container">
+                <div class="routine-schedule">
+                    <ul>
+                        <li id="jueves-0730-0800">7:30 AM - 8:00 AM: Desayuno y aseo<span class="countdown"></span></li>
+                        <li id="jueves-0800-0930">8:00 AM - 9:30 AM: Probabilidades: teoría<span class="countdown"></span></li>
+                        <li id="jueves-0930-1100">9:30 AM - 11:00 AM: Probabilidades: casos<span class="countdown"></span></li>
+                        <li id="jueves-1100-1545">11:00 AM - 3:45 PM: Almuerzo y descanso<span class="countdown"></span></li>
+                        <li id="jueves-1545-1715">3:45 PM - 5:15 PM: Clase: Física<span class="countdown"></span></li>
+                        <li id="jueves-1715-1730">5:15 PM - 5:30 PM: Descanso<span class="countdown"></span></li>
+                        <li id="jueves-1730-2040">5:30 PM - 8:40 PM: Clase: Estadística<span class="countdown"></span></li>
+                        <li id="jueves-2040-2100">8:40 PM - 9:00 PM: Descanso<span class="countdown"></span></li>
+                        <li id="jueves-2100-2200">9:00 PM - 10:00 PM: Repaso: Probabilidades<span class="countdown"></span></li>
+                        <li id="jueves-2200-2330">10:00 PM - 11:30 PM: Cena y relax<span class="countdown"></span></li>
+                        <li id="jueves-2330-0730">11:30 PM - 7:30 AM: Dormir<span class="countdown"></span></li>
+                    </ul>
+                    <div class="next-routine" id="jueves-next"></div>
+                </div>
+                <div class="routine-clock" id="jueves-clock"></div>
+            </div>
+        </div>
+        <div class="routine-day" id="viernes">
+            <h5>Viernes</h5>
+            <div class="routine-container">
+                <div class="routine-schedule">
+                    <ul>
+                        <li id="viernes-0730-0800">7:30 AM - 8:00 AM: Desayuno y aseo<span class="countdown"></span></li>
+                        <li id="viernes-0800-1000">8:00 AM - 10:00 AM: Programación: repaso<span class="countdown"></span></li>
+                        <li id="viernes-1000-1130">10:00 AM - 11:30 AM: Diseño de Proyectos: notas<span class="countdown"></span></li>
+                        <li id="viernes-1130-1800">11:30 AM - 6:00 PM: Ocio: deporte y amigos<span class="countdown"></span></li>
+                        <li id="viernes-1800-1930">6:00 PM - 7:30 PM: Física: problemas<span class="countdown"></span></li>
+                        <li id="viernes-1930-2000">7:30 PM - 8:00 PM: Descanso<span class="countdown"></span></li>
+                        <li id="viernes-2000-2130">8:00 PM - 9:30 PM: Probabilidades: práctica<span class="countdown"></span></li>
+                        <li id="viernes-2130-2330">9:30 PM - 11:30 PM: Cena y relax<span class="countdown"></span></li>
+                        <li id="viernes-2330-0730">11:30 PM - 7:30 AM: Dormir<span class="countdown"></span></li>
+                    </ul>
+                    <div class="next-routine" id="viernes-next"></div>
+                </div>
+                <div class="routine-clock" id="viernes-clock"></div>
+            </div>
+        </div>
+        <div class="routine-day" id="sabado">
+            <h5>Sábado</h5>
+            <div class="routine-container">
+                <div class="routine-schedule">
+                    <ul>
+                        <li id="sabado-0730-0800">7:30 AM - 8:00 AM: Dormir<span class="countdown"></span></li>
+                        <li id="sabado-0800-0930">8:00 AM - 9:30 AM: Física: problemas<span class="countdown"></span></li>
+                        <li id="sabado-0930-1100">9:30 AM - 11:00 AM: Probabilidades: casos<span class="countdown"></span></li>
+                        <li id="sabado-1100-1300">11:00 AM - 1:00 PM: Descanso<span class="countdown"></span></li>
+                        <li id="sabado-1300-1500">1:00 PM - 3:00 PM: Física: estudio<span class="countdown"></span></li>
+                        <li id="sabado-1500-1520">3:00 PM - 3:20 PM: Descanso<span class="countdown"></span></li>
+                        <li id="sabado-1520-1720">3:20 PM - 5:20 PM: Probabilidades: práctica<span class="countdown"></span></li>
+                        <li id="sabado-1720-1740">5:20 PM - 5:40 PM: Descanso<span class="countdown"></span></li>
+                        <li id="sabado-1740-1940">5:40 PM - 7:40 PM: Tareas<span class="countdown"></span></li>
+                        <li id="sabado-1940-2330">7:40 PM - 11:30 PM: Ocio: deporte y amigos<span class="countdown"></span></li>
+                        <li id="sabado-2330-0730">11:30 PM - 7:30 AM: Dormir<span class="countdown"></span></li>
+                    </ul>
+                    <div class="next-routine" id="sabado-next"></div>
+                </div>
+                <div class="routine-clock" id="sabado-clock"></div>
+            </div>
+            <div class="weekend-plan">
+                <p><strong>Fin de Semana</strong></p>
+                <p>- Reforzar Física y Probabilidades</p>
+                <p>- Estudiar: bloques de 2h con descansos de 20min</p>
+                <p>- Sábado: 4h / Domingo: 2h</p>
+                <p>- Ocio: deporte, amigos, relax</p>
+            </div>
+        </div>
+        <div class="routine-day" id="domingo">
+            <h5>Domingo</h5>
+            <div class="routine-container">
+                <div class="routine-schedule">
+                    <ul>
+                        <li id="domingo-0730-0900">7:30 AM - 9:00 AM: Dormir<span class="countdown"></span></li>
+                        <li id="domingo-0900-1100">9:00 AM - 11:00 AM: Física: estudio<span class="countdown"></span></li>
+                        <li id="domingo-1100-1120">11:00 AM - 11:20 AM: Descanso<span class="countdown"></span></li>
+                        <li id="domingo-1120-1900">11:20 AM - 7:00 PM: Ocio: deporte y amigos<span class="countdown"></span></li>
+                        <li id="domingo-1900-2330">7:00 PM - 11:30 PM: Cena y relax<span class="countdown"></span></li>
+                        <li id="domingo-2330-0730">11:30 PM - 7:30 AM: Dormir<span class="countdown"></span></li>
+                    </ul>
+                    <div class="next-routine" id="domingo-next"></div>
+                </div>
+                <div class="routine-clock" id="domingo-clock"></div>
+            </div>
+            <div class="weekend-plan">
+                <p><strong>Fin de Semana</strong></p>
+                <p>- Reforzar Física y Probabilidades</p>
+                <p>- Estudiar: bloques de 2h con descansos de 20min</p>
+                <p>- Sábado: 4h / Domingo: 2h</p>
+                <p>- Ocio: deporte, amigos, relax</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const schedule = {
+            '12:00 PM-1:30 PM': { lunes: 'Base de Datos' },
+            '1:30 PM-2:00 PM': { lunes: 'LBCOM1' },
+            '2:00 PM-3:30 PM': { lunes: 'Base de Datos' },
+            '3:30 PM-3:45 PM': { lunes: 'LBCOM1' },
+            '3:45 PM-5:15 PM': { lunes: 'Programación', miercoles: 'Física 2', jueves: 'Física 2' },
+            '5:15 PM-5:30 PM': { lunes: 'LBCOM2' },
+            '5:30 PM-7:00 PM': { martes: 'Programación', jueves: 'Estadística' },
+            '7:00 PM-7:10 PM': { martes: 'LBCOM2' },
+            '7:10 PM-8:40 PM': { lunes: 'Diseño de Proyectos', martes: 'Programación', jueves: 'Estadística' },
+            '8:40 PM-8:50 PM': { martes: 'LBCOM2' },
+            '8:50 PM-10:20 PM': { lunes: 'Diseño de Proyectos' }
+        };
+
+        const days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+        let countdownInterval = null;
+        let voiceInterval = null;
+        let voiceEnabled = true;
+        let lastVoiceMinute = -1;
+
+        // Reloj con segundos en formato 12 horas
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 -> 12
+            document.getElementById('clock').textContent = `${days[now.getDay()].toUpperCase()} ${hours}:${minutes}:${seconds} ${ampm} -05`;
+            return { hours: now.getHours(), minutes: now.getMinutes(), seconds: now.getSeconds() };
+        }
+
+        // Convertir hora en formato 12 horas a minutos
+        function convertToMinutes(timeStr) {
+            const [time, period] = timeStr.split(' ');
+            let [hours, minutes] = time.split(':').map(Number);
+            if (period === 'PM' && hours !== 12) hours += 12;
+            if (period === 'AM' && hours === 12) hours = 0;
+            return hours * 60 + minutes;
+        }
+
+        // Función para hablar la hora y la próxima rutina
+        function speakTimeAndNextRoutine(currentTimeStr, nextRoutine) {
+            if (!voiceEnabled) return;
+            const now = new Date();
+            const currentMinute = now.getMinutes();
+            if (currentMinute % 5 !== 0 || currentMinute === lastVoiceMinute) return;
+            lastVoiceMinute = currentMinute;
+
+            const utterance = new SpeechSynthesisUtterance(`Son las ${currentTimeStr}. Próxima rutina: ${nextRoutine}`);
+            utterance.lang = 'es-ES';
+            utterance.rate = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Toggle voz
+        document.getElementById('voiceToggleBtn').addEventListener('click', () => {
+            voiceEnabled = !voiceEnabled;
+            const button = document.getElementById('voiceToggleBtn');
+            button.textContent = voiceEnabled ? 'Voz Activada' : 'Voz Desactivada';
+            button.disabled = !voiceEnabled;
+            if (!voiceEnabled) {
+                window.speechSynthesis.cancel();
+                lastVoiceMinute = -1;
+            }
+        });
+
+        // Iniciar conteo regresivo para la rutina actual con próxima rutina
+        function startCountdown(day, routine, endTime, nextRoutineText) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            const countdownElement = routine.querySelector('.countdown');
+            const updateCountdown = () => {
+                const now = new Date();
+                const currentTime = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+                let timeLeft = endTime - currentTime;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownElement.textContent = '';
+                    updateRoutineVisibility();
+                    return;
+                }
+                const hoursLeft = Math.floor(timeLeft / 60);
+                const minutesLeft = Math.floor(timeLeft % 60);
+                const secondsLeft = Math.floor((timeLeft % 1) * 60);
+                countdownElement.textContent = `(Faltan ${hoursLeft}:${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}, Próxima: ${nextRoutineText})`;
+            };
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        // Bloquear/desbloquear rutinas y avanzar automáticamente con horario
+        function updateRoutineVisibility() {
+            const now = new Date();
+            const currentDay = days[now.getDay()];
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentSecond = now.getSeconds();
+            const currentTime = currentHour * 60 + currentMinute + currentSecond / 60;
+
+            const { hours, minutes, seconds } = updateClock();
+            let hours12 = hours % 12;
+            hours12 = hours12 ? hours12 : 12;
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const currentTimeStr = `${hours12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+
+            days.forEach(day => {
+                const element = document.getElementById(day);
+                const clockElement = document.getElementById(`${day}-clock`);
+                const nextElement = document.getElementById(`${day}-next`);
+                if (day === currentDay) {
+                    element.classList.remove('locked');
+                    clockElement.textContent = `${hours12}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+                    const routines = element.getElementsByTagName('li');
+                    let nextRoutine = null;
+                    let foundCurrent = false;
+
+                    for (let i = 0; i < routines.length; i++) {
+                        const routine = routines[i];
+                        routine.classList.remove('current', 'passed');
+                        const countdownElement = routine.querySelector('.countdown');
+                        countdownElement.textContent = '';
+                        const [start, end] = routine.id.match(/\d{4}-\d{4}|\d{4}/) ? routine.id.match(/\d{4}-\d{4}|\d{4}/)[0].split('-') : ['0000', '0000'];
+                        const startTime = start ? parseInt(start.substring(0, 2)) * 60 + parseInt(start.substring(2)) : 0;
+                        let endTime = end ? parseInt(end.substring(0, 2)) * 60 + parseInt(end.substring(2)) : 2400;
+                        if (endTime < startTime) {
+                            if (currentTime >= startTime) {
+                                endTime += 1440;
+                            } else {
+                                endTime += 1440;
+                                if (currentTime < endTime - 1440) {
+                                    endTime -= 1440;
+                                    startTime -= 1440;
+                                }
+                            }
+                        }
+                        if (currentTime >= startTime && currentTime < endTime) {
+                            routine.classList.add('current');
+                            const nextRoutineText = i + 1 < routines.length ? routines[i + 1].textContent.replace(/\s*\(Faltan.*\)/, '') : 'Fin del día';
+                            startCountdown(day, routine, endTime, nextRoutineText);
+                            foundCurrent = true;
+                        } else if (currentTime >= endTime) {
+                            routine.classList.add('passed');
+                        } else if (foundCurrent && !nextRoutine) {
+                            nextRoutine = routine.textContent.replace(/\s*\(Faltan.*\)/, '');
+                        }
+                    }
+                    nextElement.textContent = nextRoutine ? `Siguiente: ${nextRoutine}` : 'Fin del día';
+                    speakTimeAndNextRoutine(currentTimeStr, nextRoutine || 'Fin del día');
+                } else {
+                    element.classList.add('locked');
+                    clockElement.textContent = '';
+                    nextElement.textContent = '';
+                    const routines = element.getElementsByTagName('li');
+                    for (let routine of routines) {
+                        const countdownElement = routine.querySelector('.countdown');
+                        countdownElement.textContent = '';
+                    }
+                }
+            });
+
+            const timeSlots = Object.keys(schedule);
+            const rows = document.querySelectorAll('.schedule-table tbody tr');
+            rows.forEach(row => {
+                const timeCell = row.cells[0];
+                const dayCells = Array.from(row.cells).slice(1);
+                const [start, end] = timeCell.textContent.split(' - ');
+                const startTime = convertToMinutes(start);
+                const endTime = convertToMinutes(end);
+                if (currentTime >= endTime) {
+                    timeCell.classList.add('passed');
+                    dayCells.forEach(cell => {
+                        if (cell.textContent.trim()) cell.classList.add('passed');
+                    });
+                } else {
+                    timeCell.classList.remove('passed');
+                    dayCells.forEach(cell => cell.classList.remove('passed'));
+                }
+                if (schedule[timeCell.textContent] && schedule[timeCell.textContent][currentDay]) {
+                    dayCells[days.indexOf(currentDay) - 1].classList.add('class-time');
+                } else {
+                    dayCells.forEach(cell => cell.classList.remove('class-time'));
+                }
+            });
+        }
+
+        function getNextDaySchedule() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            const tomorrowDay = days[tomorrow.getDay()];
+            const timeSlots = Object.keys(schedule);
+            for (let slot of timeSlots) {
+                if (schedule[slot][tomorrowDay]) {
+                    return `${schedule[slot][tomorrowDay]} a las ${slot.split('-')[0]}`;
+                }
+            }
+            return 'Sin clases';
+        }
+
+        function updateNextDay() {
+            const now = new Date();
+            const nextDay = document.getElementById('nextDay');
+            nextDay.textContent = `Mañana (${days[(now.getDay() + 1) % 7].charAt(0).toUpperCase() + days[(now.getDay() + 1) % 7].slice(1)}): ${getNextDaySchedule()}`;
+        }
+
+        setInterval(() => {
+            updateClock();
+            updateRoutineVisibility();
+            updateNextDay();
+        }, 1000);
+
+        updateClock();
+        updateRoutineVisibility();
+        updateNextDay();
+    </script>
+</body>
+</html>
