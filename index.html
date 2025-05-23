@@ -70,8 +70,6 @@
             background-color: #003d33;
         }
         .schedule-table td.class-time {
-            background-color: #00cc99;
-            color: #1a2a2a;
             font-weight: bold;
         }
         .schedule-table td.passed {
@@ -81,6 +79,13 @@
         .schedule-table td.class-time span {
             color: #ff4444;
         }
+        .course-Base-de-Datos { background-color: #ff9999; }
+        .course-LBCOM1 { background-color: #99ff99; }
+        .course-LBCOM2 { background-color: #99ccff; }
+        .course-Programación { background-color: #ffff99; }
+        .course-Física-2 { background-color: #ffcc99; }
+        .course-Estadística { background-color: #cc99ff; }
+        .course-Diseño-de-Proyectos { background-color: #99ffff; }
         .routine-section {
             margin-top: 15px;
         }
@@ -178,17 +183,17 @@
                 </tr>
             </thead>
             <tbody>
-                <tr><td class="passed"><span>12:00 PM - 1:30 PM</span></td><td class="passed class-time">Base de Datos</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td class="passed"><span>1:30 PM - 2:00 PM</span></td><td class="passed class-time">LBCOM1</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td class="passed"><span>2:00 PM - 3:30 PM</span></td><td class="passed class-time">Base de Datos</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td class="passed"><span>3:30 PM - 3:45 PM</span></td><td class="passed class-time">LBCOM1</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td class="passed"><span>3:45 PM - 5:15 PM</span></td><td class="passed class-time">Programación</td><td></td><td class="passed class-time">Física 2</td><td class="passed class-time">Física 2</td><td></td></tr>
-                <tr><td class="passed"><span>5:15 PM - 5:30 PM</span></td><td class="passed class-time">LBCOM2</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td class="passed"><span>5:30 PM - 7:00 PM</span></td><td></td><td class="passed class-time">Programación</td><td></td><td class="passed class-time">Estadística</td><td></td></tr>
-                <tr><td class="passed"><span>7:00 PM - 7:10 PM</span></td><td></td><td class="passed class-time">LBCOM2</td><td></td><td></td><td></td></tr>
-                <tr><td class="passed"><span>7:10 PM - 8:40 PM</span></td><td class="passed class-time">Diseño de Proyectos</td><td class="passed class-time">Programación</td><td></td><td class="passed class-time">Estadística</td><td></td></tr>
-                <tr><td class="passed"><span>8:40 PM - 8:50 PM</span></td><td></td><td class="passed class-time">LBCOM2</td><td></td><td></td><td></td></tr>
-                <tr><td class="passed"><span>8:50 PM - 10:20 PM</span></td><td class="passed class-time">Diseño de Proyectos</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>12:00 PM - 1:30 PM</span></td><td class="passed class-time course-Base-de-Datos">Base de Datos</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>1:30 PM - 2:00 PM</span></td><td class="passed class-time course-LBCOM1">LBCOM1</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>2:00 PM - 3:30 PM</span></td><td class="passed class-time course-Base-de-Datos">Base de Datos</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>3:30 PM - 3:45 PM</span></td><td class="passed class-time course-LBCOM1">LBCOM1</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>3:45 PM - 5:15 PM</span></td><td class="passed class-time course-Programación">Programación</td><td></td><td class="passed class-time course-Física-2">Física 2</td><td class="passed class-time course-Física-2">Física 2</td><td></td></tr>
+                <tr><td class="passed"><span>5:15 PM - 5:30 PM</span></td><td class="passed class-time course-LBCOM2">LBCOM2</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>5:30 PM - 7:00 PM</span></td><td></td><td class="passed class-time course-Programación">Programación</td><td></td><td class="passed class-time course-Estadística">Estadística</td><td></td></tr>
+                <tr><td class="passed"><span>7:00 PM - 7:10 PM</span></td><td></td><td class="passed class-time course-LBCOM2">LBCOM2</td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>7:10 PM - 8:40 PM</span></td><td class="passed class-time course-Diseño-de-Proyectos">Diseño de Proyectos</td><td class="passed class-time course-Programación">Programación</td><td></td><td class="passed class-time course-Estadística">Estadística</td><td></td></tr>
+                <tr><td class="passed"><span>8:40 PM - 8:50 PM</span></td><td></td><td class="passed class-time course-LBCOM2">LBCOM2</td><td></td><td></td><td></td></tr>
+                <tr><td class="passed"><span>8:50 PM - 10:20 PM</span></td><td class="passed class-time course-Diseño-de-Proyectos">Diseño de Proyectos</td><td></td><td></td><td></td><td></td></tr>
             </tbody>
         </table>
         <p id="nextDay">Mañana (Viernes): Sin clases</p>
@@ -538,9 +543,10 @@
                     dayCells.forEach(cell => cell.classList.remove('passed'));
                 }
                 if (schedule[timeCell.textContent] && schedule[timeCell.textContent][currentDay]) {
-                    dayCells[days.indexOf(currentDay) - 1].classList.add('class-time');
+                    const course = schedule[timeCell.textContent][currentDay].replace(/ /g, '-').replace(/[^\w-]/g, '');
+                    dayCells[days.indexOf(currentDay) - 1].classList.add('class-time', `course-${course}`);
                 } else {
-                    dayCells.forEach(cell => cell.classList.remove('class-time'));
+                    dayCells.forEach(cell => cell.classList.remove('class-time', ...Array.from(cell.classList).filter(cls => cls.startsWith('course-'))));
                 }
             });
         }
